@@ -1,5 +1,6 @@
 const RobotUser = require("./RobotUser");
 const LegalMovePlayer = require("./LegalMovePlayer");
+const MonteCarloPlayer = require("./MonteCarloPlayer");
 
 
 /**
