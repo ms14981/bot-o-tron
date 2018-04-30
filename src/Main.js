@@ -6,19 +6,19 @@ const LegalMovePlayer = require("./LegalMovePlayer");
  * Start a RobotUser (lichess account defined by API_TOKEN) that listens for challenges
  * and spawns games for unrated challenges. A player object must be supplied that can
  * produce the next move to play given the previous moves.
- * 
+ *
  * Token can be created on BOT accounts at https://lichess.org/account/oauth/token/create
  * Put the token in the shell environment with
- * 
+ *
  * export API_TOKEN=xxxxxxxxxxxxxx
  * yarn install
  * yarn start
- * 
+ *
  */
 
 const token = process.env.API_TOKEN;
 
-const player = new LegalMovePlayer();
+const player = new MonteCarloPlayer();
 const robot = new RobotUser(token, player);
 
 robot.start();
