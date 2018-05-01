@@ -28,7 +28,7 @@ class MonteCarloPlayer {
       legalMoves.forEach(move => {
         let opponentsMoves = legalMoves.slice();
         opponentsMoves.push(move);
-        let opponentsLegalMoves = getLegalMoves(opponentsMoves);
+        let opponentsLegalMoves = this.getLegalMoves(opponentsMoves);
         if (!opponentsLegalMoves.length) {
           console.log("End of game!!!")
         }
