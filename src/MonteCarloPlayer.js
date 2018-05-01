@@ -21,7 +21,7 @@ class MonteCarloPlayer {
     // }
 
     const NUM_SIMULATIONS = 100;
-
+    //TODO: FIX ---- Moves are a space separated string!!!!!
     if (legalMoves.length) {
       let bestRatio = 0;
       let bestMove = "";
@@ -38,7 +38,7 @@ class MonteCarloPlayer {
           let numWins = 0;
           let numGames;
           for (numGames = 0; numGames < NUM_SIMULATIONS; numGames++) {
-            numWins += this.simulate(moves, move, false);
+            numWins += this.simulate(moves, move, false, 5);
           }
           console.log("Number of wins = " + numWins);
           console.log("Number of games = " + numGames);
@@ -54,24 +54,29 @@ class MonteCarloPlayer {
         }
 
       });
+      console.log("Best move")
+      console.log(bestMove)
       return bestMove;
       //return this.getRandomMove(legalMoves);
     }
   }
 
-  simulate(movesSoFar, move, isAIsTurn) {
+  simulate(movesSoFar, move, isAIsTurn, depth) {
     var legalMoves = this.getLegalMoves(movesSoFar);
     var mates = legalMoves.filter(move => /\#/.test(move.san));
     var checks = legalMoves.filter(move => /\+/.test(move.san));
 
-    if (mates.length && isAIsTurn) {
+    if (depth <= 0) {
+      return 0.5;
+    } else if (mates.length && isAIsTurn) {
       return 1;
     } else if (mates.length) {
       return 0;
     } else {
-      let newMovePath = legalMoves.slice();
-      newMovePath.push(move);
-
+      return 0.5;
+      // let newMovePath = legalMoves.slice();
+      // newMovePath.push(move);
+      // return this.simulate(newMovePath, this.getRandomMove(newMovePath), !isAIsTurn, depth--);
     }
   }
 
