@@ -38,7 +38,7 @@ class MonteCarloPlayer {
           let numWins = 0;
           let numGames;
           for (numGames = 0; numGames < NUM_SIMULATIONS; numGames++) {
-            numWins += simulate(moves, move, false);
+            numWins += this.simulate(moves, move, false);
           }
           console.log("Number of wins = " + numWins);
           console.log("Number of games = " + numGames);
