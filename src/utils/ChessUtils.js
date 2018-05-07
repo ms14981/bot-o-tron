@@ -106,6 +106,10 @@ class ChessUtils {
     return this.chess.in_stalemate();
   }
 
+  inDraw() {
+    return this.chess.in_draw();
+  }
+
   materialEval() {
     return this.material("w") - this.material("b");
   }
