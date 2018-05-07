@@ -13,7 +13,7 @@ class MonteCarloPlayer {
     const forcing = chess.filterForcing(legalMoves);
     const captures = legalMoves.filter(move => /x/.test(move.san));
 
-    const NUM_SIMULATIONS = 100;
+    const NUM_SIMULATIONS = 1;
 
     let AIPlayerColour = chess.turn();
     console.log(chess)
@@ -24,15 +24,25 @@ class MonteCarloPlayer {
       console.log(move)
       let newMoves = moves.concat(move);
       chess.move(move, { sloppy: true })
+      if (chess.inCheckmate()) {
+        return chess.uci(move);
+      }
       const opponentLegalMoves = chess.legalMoves();
       let worstScore = 1;
       let worstMove = opponentLegalMoves[0];
       opponentLegalMoves.forEach(newMove => {
         //chess.move(newMove, {sloppy:true});
-        let numWins = 0;
-        for (let i = 0; i < NUM_SIMULATIONS; i++) {
-          numWins += this.simulateUntilGameover(chess, newMove, false, 10);
+        if (chess.inCheckmate()) {
+          return chess.uci(move);
         }
+        let numWins = 0.0;
+        if (!chess.inCheckmate()) {
+          for (let i = 0; i < NUM_SIMULATIONS; i++) {
+            numWins += this.simulateUntilGameover(chess, newMove, false, 10);
+            //console.log(numWins)
+          }
+        }
+
         let score = numWins / NUM_SIMULATIONS;
         if (score < worstScore) {
           worstScore = score;
@@ -64,6 +74,10 @@ class MonteCarloPlayer {
   }
 
   simulateUntilGameover(chess, move, isAiTurn, depthLimit) {
+    if (chess.inCheckmate()) {
+      console.log("Simulating")
+      console.log(move)
+    }
     chess.move(move, { sloppy: true });
     if (chess.inCheckmate() && isAiTurn) {
       return 1;
