@@ -110,6 +110,10 @@ class ChessUtils {
     return this.chess.in_draw();
   }
 
+  history() {
+    return this.chess.history();
+  }
+
   materialEval() {
     return this.material("w") - this.material("b");
   }
