@@ -13,8 +13,8 @@ class MonteCarloPlayer {
     const forcing = chess.filterForcing(legalMoves);
     const captures = legalMoves.filter(move => /x/.test(move.san));
 
-    const NUM_SIMULATIONS = 100;
-    const DEPTH_LIMIT = 10;
+    const NUM_SIMULATIONS = 1;
+    const DEPTH_LIMIT = 1;
 
     let chosenMove = legalMoves[0];
     let bestScore = 0;
@@ -23,20 +23,34 @@ class MonteCarloPlayer {
       chess.move(aiMove);
       console.log(aiMove);
       //console.log(chess.history()[chess.history().length - 1])
-      let score = 0;
-      for (let i = 0; i < NUM_SIMULATIONS; i++) {
-        let chessCopy = this.getDeepCopy(chess);
-        let result = this.simulateUntilGameover(chessCopy, DEPTH_LIMIT);
-        score += result;
-        // console.log(chessCopy.history()[chessCopy.history().length - 1])
-        // console.log(result)
-      }
-      score /= NUM_SIMULATIONS;
-      if (score > bestScore) {
-        bestScore = score;
+      let worstScore = 1;
+      chess.legalMoves().forEach(opponentMove => {
+        chess.move(opponentMove);
+        let opponentBestMove = chess.legalMoves()[0];
+        let score = 0;
+        for (let i = 0; i < NUM_SIMULATIONS; i++) {
+          let chessCopy = this.getDeepCopy(chess);
+          let result = this.simulateUntilGameover(chessCopy, DEPTH_LIMIT);
+          score += result;
+          // console.log(chessCopy.history()[chessCopy.history().length - 1])
+          // console.log(result)
+        }
+        score /= NUM_SIMULATIONS;
+        if (score < worstScore) {
+          worstScore = score;
+          opponentBestMove = opponentMove;
+          // console.log("-------------------")
+          // console.log(score);
+        }
+        chess.undo();
+      });
+      console.log("worstScore")
+      console.log(worstScore)
+      if (worstScore > bestScore) {
+        bestScore = worstScore;
         chosenMove = aiMove;
         console.log("-------------------")
-        console.log(score);
+        console.log(worstScore);
       }
       chess.undo();
     })
@@ -52,7 +66,7 @@ class MonteCarloPlayer {
 
   simulateUntilGameover(chess, depthLimit) {
     let history = chess.history();
-    let isAiTurn = true;
+    let isAiTurn = false;
 
     while (!chess.inCheckmate() && !chess.inDraw() && depthLimit > 0) {
       //console.log(chess.legalMoves().length);
