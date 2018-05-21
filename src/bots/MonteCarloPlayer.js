@@ -14,6 +14,7 @@ class MonteCarloPlayer {
     const captures = legalMoves.filter(move => /x/.test(move.san));
 
     const NUM_SIMULATIONS = 100;
+    const DEPTH_LIMIT = 10;
     const baselineHistory = chess.history().slice();
 
     let chosenMove = legalMoves[0];
@@ -21,9 +22,10 @@ class MonteCarloPlayer {
     console.log(baselineHistory);
     console.log(legalMoves[0]);
 
+
     for (let i = 0; i < NUM_SIMULATIONS; i++) {
       let chessCopy = this.getDeepCopy(chess);
-      let result = this.simulateUntilGameover(chessCopy);
+      let result = this.simulateUntilGameover(chessCopy, DEPTH_LIMIT);
       console.log(chessCopy.history()[chessCopy.history().length - 1])
       console.log(result)
     }
@@ -38,16 +40,17 @@ class MonteCarloPlayer {
     return newChess;
   }
 
-  simulateUntilGameover(chess) {
+  simulateUntilGameover(chess, depthLimit) {
     let history = chess.history();
     let isAiTurn = true;
 
-    while (!chess.inCheckmate() && !chess.inDraw()) {
+    while (!chess.inCheckmate() && !chess.inDraw() && depthLimit > 0) {
       //console.log(chess.legalMoves().length);
       let moves = chess.legalMoves();
       let randomMove = moves[Math.floor(Math.random() * moves.length)];
       chess.move(randomMove);
       isAiTurn = !isAiTurn;
+      depthLimit--;
     }
     if (chess.inCheckmate() && isAiTurn) {
       return 1;
