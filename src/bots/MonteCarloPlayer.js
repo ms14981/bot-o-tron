@@ -13,23 +13,35 @@ class MonteCarloPlayer {
     const forcing = chess.filterForcing(legalMoves);
     const captures = legalMoves.filter(move => /x/.test(move.san));
 
-    const NUM_SIMULATIONS = 100;
+    const NUM_SIMULATIONS = 10;
     const DEPTH_LIMIT = 10;
     const baselineHistory = chess.history().slice();
 
     let chosenMove = legalMoves[0];
+    let bestScore = 0;
 
     console.log(baselineHistory);
     console.log(legalMoves[0]);
 
-
-    for (let i = 0; i < NUM_SIMULATIONS; i++) {
-      let chessCopy = this.getDeepCopy(chess);
-      let result = this.simulateUntilGameover(chessCopy, DEPTH_LIMIT);
-      console.log(chessCopy.history()[chessCopy.history().length - 1])
-      console.log(result)
-    }
-
+    legalMoves.forEach(aiMove => {
+      console.log(aiMove);
+      chess.move(aiMove);
+      let score = 0;
+      for (let i = 0; i < NUM_SIMULATIONS; i++) {
+        let chessCopy = this.getDeepCopy(chess);
+        let result = this.simulateUntilGameover(chessCopy, DEPTH_LIMIT);
+        score += result;
+        // console.log(chessCopy.history()[chessCopy.history().length - 1])
+        // console.log(result)
+      }
+      score /= NUM_SIMULATIONS;
+      if (bestScore > score) {
+        bestScore = score;
+        chosenMove = aiMove;
+      }
+      console.log(score);
+      chess.undo();
+    })
 
     return chess.uci(chosenMove);
   }
